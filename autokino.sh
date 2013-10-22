@@ -31,10 +31,10 @@ function Checkagain {
     SUM_CROP=0
     echo "checking for dark forces"
     for (( K=$1 ; K<=$3 ; K++ )) ; do
-        let SUM_CROP="${SUM_CROP} + ${ARR[K]}"
+        let "SUM_CROP=${SUM_CROP} + ${ARR[K]}"
     done
 
-    let MIDCROP="${SUM_CROP}/$3"
+    let "MIDCROP=${SUM_CROP}/$3"
 
    if [ $MIDCROP -ge 20 ] ; then
   	BNAME=`basename $4 .jpg`
@@ -50,12 +50,12 @@ function Checkagain {
 
 function Checkratio {
 	#checking if the ratio of probable image makes sense at all
-    let MAN_CROP_W="$2*10/28"
+    let "MAN_CROP_W=${2}*10/28"
     for (( E=1 ; E<=$CROP_COUNT ; E++ )) ; do
         echo -n "Crop detected $E/$CROP_COUNT ${CSTART[E]} - ${CSTOP[E]}"
-        let RAT="${2}*100/(${CSTOP[E]} - ${CSTART[E]})"
-        let CROP_POS_X="${CSTART[E]} + 2"
-        let CROP_W="${CSTOP[E]} - ${CSTART[E]} - 4"
+        let "RAT=${2}*100/(${CSTOP[E]} - ${CSTART[E]})"
+        let "CROP_POS_X=${CSTART[E]} + 2"
+        let "CROP_W=${CSTOP[E]} - ${CSTART[E]} - 4"
         # checking the various fuzzy ratio ranges
         # needs some improvement and cleaning up here
         if [ "$RAT" -ge 260 ] && [ "$RAT" -le 360 ] ; then
@@ -69,14 +69,14 @@ function Checkratio {
         # severe overlap separation
         if [ "$RAT" -lt 260 ] ; then
             echo "... severe overlapping detected, initialising extended cropping routine..."
-            let CROPSN = "${CROP_W}/${MAN_CROP_W} + 1"
-            let SMALLCROPS = "${CROP_W}/${CROPSN}"
-            let CROPDIST = "( ${MAN_CROP_W} + ${SMALLCROPS} ) / 2"
-            let STEPS = "${CROPSN} - 1"
+            let "CROPSN = ${CROP_W}/${MAN_CROP_W} + 1"
+            let "SMALLCROPS = ${CROP_W}/${CROPSN}"
+            let "CROPDIST = ( ${MAN_CROP_W} + ${SMALLCROPS} ) / 2"
+            let "STEPS = ${CROPSN} - 1"
             echo "cropping ${CROPSN} parts"
 
             for (( F=0 ; F<=$STEPS ; F++ )) ; do
-                let CROP_POS_XX = "${CROP_POS_X} + $F + ${SMALLCROPS}"
+                let "CROP_POS_XX = ${CROP_POS_X} + $F * ${SMALLCROPS}"
                 Checkagain $CROP_POS_XX $CROPDIST $CROP_W $1 $E $F
             done
         fi
@@ -153,8 +153,8 @@ for A in *.[Jj][Pp][Gg] ; do
 	echo " OK"
 
 	# calculating average lightness and setting threshold to 1/3.3 lightness
-	let AVG="$SUM/${#ARR[@]}"
-	let THR="$AVG*10/33"
+	let "AVG=$SUM/${#ARR[@]}"
+	let "THR=$AVG*10/33"
 
 	FLAG=""
 	if [ $THR -lt 17 ] ; then
@@ -191,7 +191,7 @@ for A in *.[Jj][Pp][Gg] ; do
 		echo "Checkratio $A $H"
 		Checkratio $A $H
 	elif [ "$SPH" == "y" ] ; then
-		let NH="$H*7/10"
+		let "NH=${H}*7/10"
 		Checkratio $A $NH
  	fi
 
